@@ -16,6 +16,8 @@ using Ocelot.Request.Middleware;
 using System.Threading.Tasks;
 using System.Threading;
 
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Ocelot.UnitTests.Requester
 {
     public class HttpClientHttpRequesterTest
@@ -28,6 +30,8 @@ namespace Ocelot.UnitTests.Requester
         private Mock<IOcelotLoggerFactory> _loggerFactory;
         private Mock<IOcelotLogger> _logger;
 
+        private Mock<IHttpClientFactory> _httpClientFactory;
+
         public HttpClientHttpRequesterTest()
         {
             _factory = new Mock<IDelegatingHandlerHandlerFactory>();
@@ -38,10 +42,13 @@ namespace Ocelot.UnitTests.Requester
                 .Setup(x => x.CreateLogger<HttpClientHttpRequester>())
                 .Returns(_logger.Object);
             _cacheHandlers = new Mock<IHttpClientCache>();
+            _httpClientFactory = new Mock<IHttpClientFactory>();
+
             _httpClientRequester = new HttpClientHttpRequester(
                 _loggerFactory.Object, 
                 _cacheHandlers.Object, 
-                _factory.Object);            
+                _factory.Object,
+                _httpClientFactory.Object);            
         }
 
         [Fact]

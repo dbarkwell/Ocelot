@@ -1,6 +1,9 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+
+using Microsoft.Extensions.DependencyInjection;
+
 using Ocelot.Logging;
 using Ocelot.Middleware;
 using Ocelot.Responses;
@@ -15,19 +18,23 @@ namespace Ocelot.Requester
         private readonly IOcelotLogger _logger;
         private readonly IDelegatingHandlerHandlerFactory _factory;
 
+        private readonly IHttpClientFactory _clientFactory;
+
         public HttpClientHttpRequester(IOcelotLoggerFactory loggerFactory,
             IHttpClientCache cacheHandlers,
-            IDelegatingHandlerHandlerFactory house)
+            IDelegatingHandlerHandlerFactory house,
+            IHttpClientFactory clientFactory)
         {
             _logger = loggerFactory.CreateLogger<HttpClientHttpRequester>();
             _cacheHandlers = cacheHandlers;
             _factory = house;
+            _clientFactory = clientFactory;
         }
 
         public async Task<Response<HttpResponseMessage>> GetResponse(DownstreamContext context)
         {
-            var builder = new HttpClientBuilder(_factory, _cacheHandlers, _logger);
-
+            var builder = new HttpClientBuilder(_factory, _cacheHandlers, _logger, _clientFactory);
+ 
             var httpClient = builder.Create(context);
 
             try

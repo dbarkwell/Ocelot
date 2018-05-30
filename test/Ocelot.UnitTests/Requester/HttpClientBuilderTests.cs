@@ -27,7 +27,8 @@ namespace Ocelot.UnitTests.Requester
     {
         private readonly HttpClientBuilder _builder;
         private readonly Mock<IDelegatingHandlerHandlerFactory> _factory;
-        private IHttpClient _httpClient;
+        private readonly Mock<IHttpClientFactory> _httpClientFactory;
+        private HttpClient _httpClient;
         private HttpResponseMessage _response;
         private DownstreamContext _context;
         private readonly Mock<IHttpClientCache> _cacheHandlers;
@@ -40,7 +41,8 @@ namespace Ocelot.UnitTests.Requester
             _cacheHandlers = new Mock<IHttpClientCache>();
             _logger = new Mock<IOcelotLogger>();
             _factory = new Mock<IDelegatingHandlerHandlerFactory>();
-            _builder = new HttpClientBuilder(_factory.Object, _cacheHandlers.Object, _logger.Object);
+            _httpClientFactory = new Mock<IHttpClientFactory>();
+            _builder = new HttpClientBuilder(_factory.Object, _cacheHandlers.Object, _logger.Object, _httpClientFactory.Object);
         }
 
         [Fact]
@@ -301,6 +303,7 @@ namespace Ocelot.UnitTests.Requester
 
         private void WhenIBuild()
         {
+            _httpClientFactory.Setup(h => h.CreateClient(It.IsAny<string>())).Returns(new HttpClient());
             _httpClient = _builder.Create(_context);
         }
 

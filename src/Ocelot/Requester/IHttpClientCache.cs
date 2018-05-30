@@ -9,8 +9,8 @@ namespace Ocelot.Requester
     public interface IHttpClientCache
     {
         bool Exists(string id);
-        IHttpClient Get(string id);
+        HttpClient Get(string id);
         void Remove(string id);
-        void Set(string id, IHttpClient handler, TimeSpan expirationTime);
+        void Set(string id, HttpClient handler, TimeSpan expirationTime);
     }
 }
